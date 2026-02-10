@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.characterapp.view.CharacterScreen
 import com.example.characterapp.ui.theme.CharacterAppTheme
 import com.example.characterapp.view.MenuScreen
+import com.example.characterapp.view.PlanetScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -66,7 +67,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 CharacterScreen()
             }
             composable(Screen.PlanetScreen.route) {
-                //PlanetScreen()
+                PlanetScreen()
             }
         }
     }

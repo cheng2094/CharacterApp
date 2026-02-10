@@ -37,27 +37,29 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.characterapp.model.character.Character
+import com.example.characterapp.model.planet.Planet
 import com.example.characterapp.ui.theme.DarkGreen
 import com.example.characterapp.ui.theme.Purple
 import com.example.characterapp.viewmodel.CharacterViewModel
+import com.example.characterapp.viewmodel.PlanetViewModel
 
 @Composable
-fun CharacterScreen(
+fun PlanetScreen(
     modifier: Modifier = Modifier,
-    viewModel: CharacterViewModel = hiltViewModel()
+    viewModel: PlanetViewModel = hiltViewModel()
 ){
     val state by viewModel.state.collectAsState()
-    //Log.d("Cant Items", "${state.characters.size}")
+    //Log.d("Cant Items", "${state.planets.size}")
     LazyColumn(modifier = modifier) {
-        items(state.characters){ character ->
-            CharacterCard(character)
+        items(state.planets){ planet ->
+            PlanetCard(planet)
         }
     }
 }
 
 @Composable
-fun CharacterCard(
-    character: Character,
+fun PlanetCard(
+    planet: Planet,
     modifier: Modifier = Modifier
 ){
     var expanded by remember {
@@ -83,8 +85,8 @@ fun CharacterCard(
                   color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
               ) {
                   AsyncImage(
-                      model = character.image,
-                      contentDescription = character.name,
+                      model = planet.image,
+                      contentDescription = planet.name,
                       contentScale = ContentScale.Fit
                   )
               }
@@ -96,27 +98,26 @@ fun CharacterCard(
                       .weight(1f)
               ){
                   Text(
-                      text = character.name,
+                      text = planet.name,
                       style = MaterialTheme.typography.titleLarge
                   )
                   Row(
                       verticalAlignment = Alignment.CenterVertically
                   )
                   {
-                      Text(
-                          text = character.race,
-                          style = MaterialTheme.typography.titleSmall
+                    val color = when (planet.isDestroyed){
+                        true -> Color.Red
+                        false -> Color.Green
+                    }
+                      Box(
+                          modifier
+                              .padding(2.dp)
+                              .clip(CircleShape)
+                              .background(color)
+                              .size(12.dp)
                       )
-                  }
-                  Row{
                       Text(
-                          text = "Ki: ${character.ki}",
-                          style = MaterialTheme.typography.titleSmall
-                      )
-                  }
-                  Row{
-                      Text(
-                          text = "Max Ki: ${character.maxKi}",
+                          text = if (planet.isDestroyed) "Destroyed" else "Active",
                           style = MaterialTheme.typography.titleSmall
                       )
                   }
@@ -134,65 +135,17 @@ fun CharacterCard(
               }
           }
           if(expanded){
-
-              //TransformationCard(character, modifier)
+            Row(
+                modifier.padding(16.dp)
+            ) {
+                Column {
+                    Text(text = planet.description,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
           }
       }
   }
-}
-
-@Composable
-fun TransformationCard(
-    character: Character,
-    modifier: Modifier = Modifier
-){
-
-
-
-
-    Row{
-        Surface(
-            modifier.size(120.dp),
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-        ) {
-            AsyncImage(
-                model = character.image,
-                contentDescription = character.name,
-                contentScale = ContentScale.Fit
-            )
-        }
-
-        Column(
-            modifier
-                .padding(16.dp)
-                .align(Alignment.CenterVertically)
-                .weight(1f)
-        ){
-            Text(
-                text = character.name,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            )
-            {
-                Text(
-                    text = character.race,
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-            Row{
-                Text(
-                    text = "Ki: ${character.ki}",
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-            Row{
-                Text(
-                    text = "Max Ki: ${character.maxKi}",
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-        }
 }
 

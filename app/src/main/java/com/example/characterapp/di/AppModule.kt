@@ -1,6 +1,6 @@
 package com.example.characterapp.di
 
-import com.example.characterapp.api.CharacterApi
+import com.example.characterapp.api.AppApi
 import com.example.characterapp.utils.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -16,11 +16,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApi(): CharacterApi{
+    fun provideApi(): AppApi{
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(CharacterApi::class.java)
+            .create(AppApi::class.java)
     }
 }

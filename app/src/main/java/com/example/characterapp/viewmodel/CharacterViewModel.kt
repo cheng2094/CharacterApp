@@ -39,8 +39,7 @@ class CharacterViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _state.value = repo.getCharacter()
+            _state.value = repo.getCharacters()
         }
-
     }
 }

@@ -2,10 +2,10 @@ package com.example.characterapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.characterapp.model.character.CharacterResult
 import com.example.characterapp.model.character.Links
 import com.example.characterapp.model.character.Meta
-import com.example.characterapp.repository.CharacterRepository
+import com.example.characterapp.model.planet.PlanetResult
+import com.example.characterapp.repository.PlanetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,10 +14,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlanetViewModel @Inject constructor(
-    private val repo: CharacterRepository
+    private val repo: PlanetRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(
-        CharacterResult(
+        PlanetResult(
             meta = Meta(
                 currentPage = 0,
                 itemCount = 0,
@@ -25,7 +25,7 @@ class PlanetViewModel @Inject constructor(
                 totalItems = 0,
                 totalPages = 0
             ),
-            characters = emptyList(),
+            planets = emptyList(),
             links = Links(
                 first = "0",
                 last = "0",
@@ -34,12 +34,12 @@ class PlanetViewModel @Inject constructor(
             )
         )
     )
-    val state: StateFlow<CharacterResult>
+    val state: StateFlow<PlanetResult>
         get() = _state
 
     init {
         viewModelScope.launch {
-            _state.value = repo.getCharacter()
+            _state.value = repo.getPlanets()
         }
 
     }
