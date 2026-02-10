@@ -1,4 +1,4 @@
-package com.example.characterapp.model
+package com.example.characterapp.model.planet
 
 data class Links(
     val first: String,

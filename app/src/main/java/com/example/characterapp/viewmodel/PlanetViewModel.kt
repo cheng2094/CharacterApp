@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CharacterViewModel @Inject constructor(
+class PlanetViewModel @Inject constructor(
     private val repo: CharacterRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(

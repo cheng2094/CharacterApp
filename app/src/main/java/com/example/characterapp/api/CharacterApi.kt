@@ -1,6 +1,6 @@
 package com.example.characterapp.api
 
-import com.example.characterapp.model.CharacterResult
+import com.example.characterapp.model.character.CharacterResult
 import retrofit2.http.GET
 import retrofit2.http.Query
 

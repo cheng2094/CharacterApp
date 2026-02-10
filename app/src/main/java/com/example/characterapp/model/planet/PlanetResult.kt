@@ -1,10 +1,10 @@
-package com.example.characterapp.model
+package com.example.characterapp.model.planet
 
 import com.google.gson.annotations.SerializedName
 
-data class CharacterResult(
+data class PlanetResult(
     @SerializedName("items")
-    val characters: List<Character>,
+    val planets: List<Planet>,
     val links: Links,
     val meta: Meta
 )

@@ -1,4 +1,4 @@
-package com.example.characterapp.model
+package com.example.characterapp.model.character
 
 data class Character(
     val affiliation: String,

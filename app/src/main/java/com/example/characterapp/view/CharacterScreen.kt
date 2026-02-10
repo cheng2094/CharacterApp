@@ -1,6 +1,5 @@
 package com.example.characterapp.view
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -37,7 +36,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
-import com.example.characterapp.model.Character
+import com.example.characterapp.model.character.Character
 import com.example.characterapp.ui.theme.DarkGreen
 import com.example.characterapp.ui.theme.Purple
 import com.example.characterapp.viewmodel.CharacterViewModel
@@ -124,9 +123,13 @@ fun CharacterCard(
                           style = MaterialTheme.typography.titleSmall
                       )
                   }
-                  Row(
-
-                  ) {
+                  Row{
+                      Text(
+                          text = "Ki: ${character.ki}",
+                          style = MaterialTheme.typography.titleSmall
+                      )
+                  }
+                  Row{
                       Text(
                           text = "Max Ki: ${character.maxKi}",
                           style = MaterialTheme.typography.titleSmall
