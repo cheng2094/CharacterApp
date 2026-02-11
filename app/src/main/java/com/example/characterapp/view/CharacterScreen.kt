@@ -3,8 +3,6 @@ package com.example.characterapp.view
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -23,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,15 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.characterapp.model.character.Character
-import com.example.characterapp.ui.theme.DarkGreen
-import com.example.characterapp.ui.theme.Purple
+import com.example.characterapp.model.character.Transformation
 import com.example.characterapp.viewmodel.CharacterViewModel
 
 @Composable
@@ -47,10 +42,9 @@ fun CharacterScreen(
     viewModel: CharacterViewModel = hiltViewModel()
 ){
     val state by viewModel.state.collectAsState()
-    //Log.d("Cant Items", "${state.characters.size}")
     LazyColumn(modifier = modifier) {
         items(state.characters){ character ->
-            CharacterCard(character)
+            CharacterCard(character, viewModel)
         }
     }
 }
@@ -58,6 +52,7 @@ fun CharacterScreen(
 @Composable
 fun CharacterCard(
     character: Character,
+    viewModel: CharacterViewModel,
     modifier: Modifier = Modifier
 ){
     var expanded by remember {
@@ -134,8 +129,30 @@ fun CharacterCard(
               }
           }
           if(expanded){
+              //Get transformations from viewModel
+              LaunchedEffect(character.id) {
+                  viewModel.getTransformations(character.id)
+              }
 
-              //TransformationCard(character, modifier)
+              //Get stateFlow for only 1 character(selected)
+              val transformations by viewModel.getTransformationsState(character.id).collectAsState()
+
+              Column(modifier = modifier) {
+                  if (transformations.isEmpty()) {
+                      Text(
+                          text = "This character has no transformations",
+                          style = MaterialTheme.typography.titleMedium,
+                          modifier = Modifier.padding(16.dp)
+                      )
+                  } else {
+                      transformations.forEach { transformation ->
+                          TransformationCard(
+                              transformation = transformation,
+                              modifier = modifier
+                          )
+                      }
+                  }
+              }
           }
       }
   }
@@ -143,21 +160,17 @@ fun CharacterCard(
 
 @Composable
 fun TransformationCard(
-    character: Character,
+    transformation: Transformation,
     modifier: Modifier = Modifier
 ){
-
-
-
-
-    Row{
+    Row {
         Surface(
             modifier.size(120.dp),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
         ) {
             AsyncImage(
-                model = character.image,
-                contentDescription = character.name,
+                model = transformation.image,
+                contentDescription = transformation.name,
                 contentScale = ContentScale.Fit
             )
         }
@@ -167,9 +180,9 @@ fun TransformationCard(
                 .padding(16.dp)
                 .align(Alignment.CenterVertically)
                 .weight(1f)
-        ){
+        ) {
             Text(
-                text = character.name,
+                text = transformation.name,
                 style = MaterialTheme.typography.titleLarge
             )
             Row(
@@ -177,22 +190,11 @@ fun TransformationCard(
             )
             {
                 Text(
-                    text = character.race,
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-            Row{
-                Text(
-                    text = "Ki: ${character.ki}",
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-            Row{
-                Text(
-                    text = "Max Ki: ${character.maxKi}",
+                    text = "Ki: ${transformation.ki}",
                     style = MaterialTheme.typography.titleSmall
                 )
             }
         }
+    }
 }
 

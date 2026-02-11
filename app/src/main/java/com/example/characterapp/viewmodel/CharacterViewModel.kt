@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.characterapp.model.character.CharacterResult
 import com.example.characterapp.model.character.Links
 import com.example.characterapp.model.character.Meta
+import com.example.characterapp.model.character.Transformation
 import com.example.characterapp.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,8 @@ import javax.inject.Inject
 class CharacterViewModel @Inject constructor(
     private val repo: CharacterRepository
 ): ViewModel() {
+
+    //---------------------------CHARACTER-------------------------
     private val _state = MutableStateFlow(
         CharacterResult(
             meta = Meta(
@@ -27,19 +30,51 @@ class CharacterViewModel @Inject constructor(
             ),
             characters = emptyList(),
             links = Links(
-                first = "0",
-                last = "0",
-                next = "0",
-                previous = "0"
+                first = "",
+                last = "",
+                next = "",
+                previous = ""
             )
         )
     )
     val state: StateFlow<CharacterResult>
         get() = _state
 
+    //Get Characters
     init {
         viewModelScope.launch {
             _state.value = repo.getCharacters()
+        }
+    }
+
+    //------------------------TRANSFORMATION--------------------------
+    private val transformationsCache = mutableMapOf<Int, List<Transformation>>()
+
+    // ID mapping → Own flow
+    private val transformationStates = mutableMapOf<Int, MutableStateFlow<List<Transformation>>>()
+
+    fun getTransformationsState(id: Int): StateFlow<List<Transformation>> {
+        // if not exist, create empty one
+        return transformationStates.getOrPut(id) { MutableStateFlow(emptyList()) }
+    }
+
+    fun getTransformations(id: Int) {
+        viewModelScope.launch {
+
+            // if exist in cache, don't call API
+            if (transformationsCache.containsKey(id)) {
+                transformationStates[id]?.value = transformationsCache[id]!!
+                return@launch
+            }
+
+            // if not exist, call API
+            val result = repo.getTransformationById(id)
+
+            // save in cache
+            transformationsCache[id] = result.transformations
+
+            // Update only a specific character data
+            transformationStates[id]?.value = result.transformations
         }
     }
 }
