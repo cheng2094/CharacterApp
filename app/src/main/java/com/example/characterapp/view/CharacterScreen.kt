@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -129,13 +128,10 @@ fun CharacterCard(
               }
           }
           if(expanded){
-              //Get transformations from viewModel
-              LaunchedEffect(character.id) {
-                  viewModel.getTransformations(character.id)
-              }
-
-              //Get stateFlow for only 1 character(selected)
-              val transformations by viewModel.getTransformationsState(character.id).collectAsState()
+              //Get transformations
+              val transformations by viewModel
+                  .transformations(character.id)
+                  .collectAsState()
 
               Column(modifier = modifier) {
                   if (transformations.isEmpty()) {

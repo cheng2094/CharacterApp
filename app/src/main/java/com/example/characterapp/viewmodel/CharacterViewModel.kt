@@ -48,33 +48,20 @@ class CharacterViewModel @Inject constructor(
     }
 
     //------------------------TRANSFORMATION--------------------------
-    private val transformationsCache = mutableMapOf<Int, List<Transformation>>()
-
-    // ID mapping → Own flow
     private val transformationStates = mutableMapOf<Int, MutableStateFlow<List<Transformation>>>()
 
-    fun getTransformationsState(id: Int): StateFlow<List<Transformation>> {
-        // if not exist, create empty one
-        return transformationStates.getOrPut(id) { MutableStateFlow(emptyList()) }
-    }
-
-    fun getTransformations(id: Int) {
-        viewModelScope.launch {
-
-            // if exist in cache, don't call API
-            if (transformationsCache.containsKey(id)) {
-                transformationStates[id]?.value = transformationsCache[id]!!
-                return@launch
+    fun transformations(id: Int): StateFlow<List<Transformation>> {
+        //Get or add transformation list
+        return transformationStates.getOrPut(id) {
+            MutableStateFlow<List<Transformation>>(emptyList()).also { stateFlow ->
+                //Get the list of transformations from repo
+                viewModelScope.launch {
+                    repo.getTransformationsById(id).collect {
+                        //Set value into stateFlow
+                        stateFlow.value = it
+                    }
+                }
             }
-
-            // if not exist, call API
-            val result = repo.getTransformationById(id)
-
-            // save in cache
-            transformationsCache[id] = result.transformations
-
-            // Update only a specific character data
-            transformationStates[id]?.value = result.transformations
         }
     }
 }
