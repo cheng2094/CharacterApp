@@ -1,5 +1,7 @@
 package com.example.characterapp.repository
 
+import android.util.Log
+import com.example.characterapp.utils.Result
 import com.example.characterapp.api.AppApi
 import com.example.characterapp.model.character.CharacterResult
 import com.example.characterapp.model.character.Transformation
@@ -16,29 +18,42 @@ class CharacterRepository @Inject constructor(
     private val transformationCache = mutableMapOf<Int, List<Transformation>>()
 
     // ---------- CHARACTERS ----------
-    suspend fun getCharacters(): CharacterResult {
-        return appApi.getCharacters()
+    suspend fun getCharacters(): Result<CharacterResult> {
+        return try {
+            val result = appApi.getCharacters()
+            Log.d("CALL CHARACTERS API", "$result")
+            Result.Success(result)
+        } catch (e: Exception) {
+            Result.Error("Error loading characters", e)
+        }
     }
 
     // ---------- TRANSFORMATIONS ----------
-    fun getTransformationsById(id: Int): Flow<List<Transformation>> = flow {
+    fun getTransformationsById(id: Int): Flow<Result<List<Transformation>>> = flow {
 
-        // 1. Emit from cache if exist
+        emit(Result.Loading)
+
+        // Emit from cache if exist
         transformationCache[id]?.let {
-            emit(it)
+            emit(Result.Success(it))
         }
 
-        // 2. Call API
+        // Call API
         val response = appApi.getTransformationById(id)
+        Log.d("CALL TRANSFORMATION API", "$response")
 
-        // 3. Save in cache
+        // Save in cache
         transformationCache[id] = response.transformations
 
-        // 4. Emit update
-        emit(response.transformations)
+        // Emit update
+        emit(Result.Success(response.transformations))
 
-    }.catch { _ ->
+    }.catch { e ->
         // if error, emit cache only
-        emit(transformationCache[id] ?: emptyList())
+        emit(
+            if (transformationCache[id] != null)
+                Result.Success(transformationCache[id]!!)
+            else Result.Error("Error loading transformations", e)
+        )
     }
 }

@@ -34,16 +34,30 @@ import coil3.compose.AsyncImage
 import com.example.characterapp.model.character.Character
 import com.example.characterapp.model.character.Transformation
 import com.example.characterapp.viewmodel.CharacterViewModel
+import com.example.characterapp.utils.Result
 
 @Composable
 fun CharacterScreen(
-    modifier: Modifier = Modifier,
     viewModel: CharacterViewModel = hiltViewModel()
 ){
     val state by viewModel.state.collectAsState()
-    LazyColumn(modifier = modifier) {
-        items(state.characters){ character ->
-            CharacterCard(character, viewModel)
+    when(state) {
+        is Result.Loading -> {
+            Text("Loading characters...")
+        }
+
+        is Result.Error -> {
+            Text("Error loading characters")
+        }
+
+        is Result.Success -> {
+            val characters = (state as Result.Success).data.characters
+
+            LazyColumn {
+                items(characters) { char ->
+                    CharacterCard(char, viewModel)
+                }
+            }
         }
     }
 }
@@ -110,7 +124,7 @@ fun CharacterCard(
                   }
                   Row{
                       Text(
-                          text = "Max Ki: ${character.maxKi}",
+                          text = "Affiliation: ${character.affiliation}",
                           style = MaterialTheme.typography.titleSmall
                       )
                   }
@@ -129,26 +143,36 @@ fun CharacterCard(
           }
           if(expanded){
               //Get transformations
-              val transformations by viewModel
+              val result by viewModel
                   .transformations(character.id)
                   .collectAsState()
 
-              Column(modifier = modifier) {
-                  if (transformations.isEmpty()) {
-                      Text(
-                          text = "This character has no transformations",
-                          style = MaterialTheme.typography.titleMedium,
-                          modifier = Modifier.padding(16.dp)
-                      )
-                  } else {
-                      transformations.forEach { transformation ->
-                          TransformationCard(
-                              transformation = transformation,
-                              modifier = modifier
+              when(result) {
+
+                  is Result.Loading -> {
+                      Text("Loading transformations...", Modifier.padding(16.dp))
+                  }
+
+                  is Result.Error -> {
+                      Text("Error loading transformations", Modifier.padding(16.dp))
+                  }
+
+                  is Result.Success -> {
+                      val transformations = (result as Result.Success<List<Transformation>>).data
+
+                      if (transformations.isEmpty()) {
+                          Text(
+                              "This character has no transformations",
+                              Modifier.padding(16.dp)
                           )
+                      } else {
+                          transformations.forEach { t ->
+                              TransformationCard(transformation = t)
+                          }
                       }
                   }
               }
+
           }
       }
   }

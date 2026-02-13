@@ -36,11 +36,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
-import com.example.characterapp.model.character.Character
 import com.example.characterapp.model.planet.Planet
-import com.example.characterapp.ui.theme.DarkGreen
-import com.example.characterapp.ui.theme.Purple
-import com.example.characterapp.viewmodel.CharacterViewModel
+import com.example.characterapp.utils.Result
 import com.example.characterapp.viewmodel.PlanetViewModel
 
 @Composable
@@ -49,12 +46,28 @@ fun PlanetScreen(
     viewModel: PlanetViewModel = hiltViewModel()
 ){
     val state by viewModel.state.collectAsState()
-    //Log.d("Cant Items", "${state.planets.size}")
-    LazyColumn(modifier = modifier) {
-        items(state.planets){ planet ->
-            PlanetCard(planet)
+    when(state) {
+        is Result.Loading -> {
+            Text("Loading planets...")
+        }
+
+        is Result.Error -> {
+            Text("Error loading planets")
+        }
+
+        is Result.Success -> {
+            val planets = (state as Result.Success).data.planets
+
+            LazyColumn(modifier = modifier) {
+                items(planets){ planet ->
+                    PlanetCard(planet)
+                }
+            }
         }
     }
+
+
+
 }
 
 @Composable
