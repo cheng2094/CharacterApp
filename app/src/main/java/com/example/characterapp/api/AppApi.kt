@@ -3,6 +3,7 @@ package com.example.characterapp.api
 import com.example.characterapp.model.character.CharacterResult
 import com.example.characterapp.model.character.TransformationResult
 import com.example.characterapp.model.planet.PlanetResult
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -11,7 +12,7 @@ interface AppApi {
     @GET("characters")
     suspend fun getCharacters(
         @Query("limit") limit: Int = 100
-    ): CharacterResult
+    ): Response<CharacterResult>
 
     @GET("characters/{id}")
     suspend fun getTransformationById(

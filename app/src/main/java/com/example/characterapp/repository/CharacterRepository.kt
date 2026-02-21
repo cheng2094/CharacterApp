@@ -1,6 +1,5 @@
 package com.example.characterapp.repository
 
-import android.util.Log
 import com.example.characterapp.utils.Result
 import com.example.characterapp.api.AppApi
 import com.example.characterapp.model.character.CharacterResult
@@ -8,6 +7,7 @@ import com.example.characterapp.model.character.Transformation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import javax.inject.Inject
 
 class CharacterRepository @Inject constructor(
@@ -21,10 +21,20 @@ class CharacterRepository @Inject constructor(
     suspend fun getCharacters(): Result<CharacterResult> {
         return try {
             val result = appApi.getCharacters()
-            Log.d("CALL CHARACTERS API", "$result")
-            Result.Success(result)
+            val response = result.body()
+
+            Timber.tag("CALL CHARACTERS API").d("$response")
+
+            if (result.isSuccessful && response != null) {
+                Result.Success(response)
+            } else {
+                val throwable = Throwable("There was an issue fetching KD transactions: ${result.errorBody().toString()}")
+                Timber.e(throwable)
+                Result.Error(throwable)
+            }
         } catch (e: Exception) {
-            Result.Error("Error loading characters", e)
+            Timber.e(e)
+            Result.Error(e)
         }
     }
 
@@ -40,7 +50,7 @@ class CharacterRepository @Inject constructor(
 
         // Call API
         val response = appApi.getTransformationById(id)
-        Log.d("CALL TRANSFORMATION API", "$response")
+        Timber.tag("CALL TRANSFORMATION API").d("$response")
 
         // Save in cache
         transformationCache[id] = response.transformations
@@ -53,7 +63,7 @@ class CharacterRepository @Inject constructor(
         emit(
             if (transformationCache[id] != null)
                 Result.Success(transformationCache[id]!!)
-            else Result.Error("Error loading transformations", e)
+            else Result.Error( e)
         )
     }
 }

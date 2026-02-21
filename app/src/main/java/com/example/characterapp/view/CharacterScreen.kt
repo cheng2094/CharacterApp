@@ -147,32 +147,20 @@ fun CharacterCard(
                   .transformations(character.id)
                   .collectAsState()
 
-              when(result) {
-
-                  is Result.Loading -> {
-                      Text("Loading transformations...", Modifier.padding(16.dp))
-                  }
-
-                  is Result.Error -> {
-                      Text("Error loading transformations", Modifier.padding(16.dp))
-                  }
-
-                  is Result.Success -> {
-                      val transformations = (result as Result.Success<List<Transformation>>).data
-
-                      if (transformations.isEmpty()) {
-                          Text(
-                              "This character has no transformations",
-                              Modifier.padding(16.dp)
-                          )
-                      } else {
-                          transformations.forEach { t ->
-                              TransformationCard(transformation = t)
-                          }
+              when {
+                  result.isLoading -> Text("Loading...")
+                  result.errorMessage != null -> Text("Error: ${result.errorMessage}")
+                  result.data.isEmpty() -> Text(
+                      "This character has no transformations",
+                      Modifier.padding(16.dp)
+                  )
+                  else -> {
+                      val transformations = (result.data)
+                      transformations.forEach { t ->
+                          TransformationCard(transformation = t)
                       }
                   }
               }
-
           }
       }
   }
