@@ -16,25 +16,46 @@ class CharacterRepository @Inject constructor(
 
     // Cache in repository
     private val transformationCache = mutableMapOf<Int, List<Transformation>>()
+    private val characterCache = mutableListOf<CharacterResult>()
 
     // ---------- CHARACTERS ----------
-    suspend fun getCharacters(): Result<CharacterResult> {
-        return try {
-            val result = appApi.getCharacters()
-            val response = result.body()
+    fun getCharacters(): Flow<Result<CharacterResult>> = flow {
 
-            Timber.tag("CALL CHARACTERS API").d("$response")
+        emit(Result.Loading)
 
-            if (result.isSuccessful && response != null) {
-                Result.Success(response)
-            } else {
-                val throwable = Throwable("There was an issue fetching KD transactions: ${result.errorBody().toString()}")
-                Timber.e(throwable)
-                Result.Error(throwable)
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-            Result.Error(e)
+        // Emit cache if available
+        if (characterCache.isNotEmpty()) {
+            emit(Result.Success(characterCache.first()))
+        }
+
+        // API Call
+        val result = appApi.getCharacters()
+        val response = result.body()
+
+        Timber.tag("CALL CHARACTERS API").d("$response")
+
+        if (result.isSuccessful && response != null) {
+
+            // save in cache
+            characterCache.clear()
+            characterCache.add(response)
+
+            emit(Result.Success(response))
+
+        } else {
+            val throwable = Throwable(
+                "There was an issue fetching characters: ${result.errorBody().toString()}"
+            )
+            Timber.e(throwable)
+            throw throwable
+        }
+
+    }.catch { e ->
+        // if error but cache exists → emit cache
+        if (characterCache.isNotEmpty()) {
+            emit(Result.Success(characterCache.first()))
+        } else {
+            emit(Result.Error(e))
         }
     }
 

@@ -2,13 +2,14 @@ package com.example.characterapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.characterapp.model.character.CharacterResult
 import com.example.characterapp.model.character.TransformationUiState
 import com.example.characterapp.utils.Result
 import com.example.characterapp.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,16 +20,13 @@ class CharacterViewModel @Inject constructor(
 ): ViewModel() {
 
     //---------------------------CHARACTER-------------------------
-    private val _state = MutableStateFlow<Result<CharacterResult>>(Result.Loading)
-    val state: StateFlow<Result<CharacterResult>>
-        get() = _state
-
     //Get Characters
-    init {
-        viewModelScope.launch {
-            _state.value = repo.getCharacters()
-        }
-    }
+    val state = repo.getCharacters()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Result.Loading
+        )
 
     //------------------------TRANSFORMATION--------------------------
     private val transformationStates = mutableMapOf<Int, MutableStateFlow<TransformationUiState>>()

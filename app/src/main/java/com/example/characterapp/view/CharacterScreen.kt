@@ -40,25 +40,18 @@ import com.example.characterapp.utils.Result
 fun CharacterScreen(
     viewModel: CharacterViewModel = hiltViewModel()
 ){
-    val state by viewModel.state.collectAsState()
-    when(state) {
-        is Result.Loading -> {
-            Text("Loading characters...")
-        }
+    val uiState = viewModel.state.collectAsState()
 
-        is Result.Error -> {
-            Text("Error loading characters")
-        }
-
+    when (val result = uiState.value) {
+        is Result.Loading -> Text("Loading characters...")
         is Result.Success -> {
-            val characters = (state as Result.Success).data.characters
-
             LazyColumn {
-                items(characters) { char ->
+                items(result.data.characters) { char ->
                     CharacterCard(char, viewModel)
                 }
             }
         }
+        is Result.Error -> Text("Error loading characters")
     }
 }
 
