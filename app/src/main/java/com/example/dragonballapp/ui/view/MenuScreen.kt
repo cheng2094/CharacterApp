@@ -1,4 +1,4 @@
-package com.example.dragonballapp.view
+package com.example.dragonballapp.ui.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.dragonballapp.viewmodel.MenuViewModel
+import com.example.dragonballapp.ui.viewmodel.MenuViewModel
 
 @Composable
 fun MenuScreen(

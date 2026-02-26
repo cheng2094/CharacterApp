@@ -1,6 +1,6 @@
 package com.example.dragonballapp
 
-import com.example.dragonballapp.viewmodel.MenuViewModel
+import com.example.dragonballapp.ui.viewmodel.MenuViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,10 +19,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.dragonballapp.view.CharacterScreen
+import com.example.dragonballapp.ui.view.CharacterScreen
 import com.example.dragonballapp.ui.theme.DragonBallAppTheme
-import com.example.dragonballapp.view.MenuScreen
-import com.example.dragonballapp.view.PlanetScreen
+import com.example.dragonballapp.ui.view.MenuScreen
+import com.example.dragonballapp.ui.view.PlanetScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 

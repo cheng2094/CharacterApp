@@ -1,4 +1,4 @@
-package com.example.dragonballapp.viewmodel
+package com.example.dragonballapp.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.example.dragonballapp.view
+package com.example.dragonballapp.ui.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

@@ -1,4 +1,4 @@
-package com.example.dragonballapp.view
+package com.example.dragonballapp.ui.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.dragonballapp.model.planet.Planet
 import com.example.dragonballapp.utils.Result
-import com.example.dragonballapp.viewmodel.PlanetViewModel
+import com.example.dragonballapp.ui.viewmodel.PlanetViewModel
 
 @Composable
 fun PlanetScreen(

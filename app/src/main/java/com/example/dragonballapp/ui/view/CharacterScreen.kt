@@ -1,4 +1,4 @@
-package com.example.dragonballapp.view
+package com.example.dragonballapp.ui.view
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -33,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.dragonballapp.model.character.Character
 import com.example.dragonballapp.model.character.Transformation
-import com.example.dragonballapp.viewmodel.CharacterViewModel
+import com.example.dragonballapp.ui.viewmodel.CharacterViewModel
 import com.example.dragonballapp.utils.Result
 
 @Composable
