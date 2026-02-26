@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.characterapp"
+    namespace = "com.example.dragonballapp"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.characterapp"
+        applicationId = "com.example.dragonballapp"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
