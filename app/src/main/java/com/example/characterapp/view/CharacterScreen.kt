@@ -41,13 +41,25 @@ fun CharacterScreen(
     viewModel: CharacterViewModel = hiltViewModel()
 ){
     val uiState = viewModel.state.collectAsState()
+    val inputText by viewModel.inputText.collectAsState()
 
     when (val result = uiState.value) {
         is Result.Loading -> Text("Loading characters...")
         is Result.Success -> {
-            LazyColumn {
-                items(result.data.characters) { char ->
-                    CharacterCard(char, viewModel)
+            Column()
+            {
+                SearchAppBar(
+                    placeholderText = "Search...",
+                    inactiveText = "Characters",
+                    searchQuery = inputText,
+                    onSearchQueryChange = viewModel::setInputText   // Lo mismo que la linea de abajo
+                    //onSearchQueryChange = { viewModel.setInputText(it) },
+                )
+
+                LazyColumn {
+                    items(result.data.characters) { char ->
+                        CharacterCard(char, viewModel)
+                    }
                 }
             }
         }
